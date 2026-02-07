@@ -1,0 +1,18 @@
+# Medical RNN Text Classification — dependencies
+torch>=1.12.0
+numpy>=1.21.0
+pandas>=1.3.0
+matplotlib>=3.5.0
+seaborn>=0.11.0
+scikit-learn>=1.0.0
+gensim>=4.0.0
+nltk>=3.6.0
+tqdm>=4.60.0
+jupyter>=1.0.0
+
+# Optional: for Kaggle API
+# kaggle>=1.5.0  # Old CLI-based approach
+kagglehub>=0.2.0  # New Python library for Kaggle datasets
+
+# Optional: for pandas.to_markdown() in notebook
+# tabulate>=0.8.0
