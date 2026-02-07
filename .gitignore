@@ -17,6 +17,10 @@ build/
 # Jupyter
 .ipynb_checkpoints/
 
+# Large data files (exceed GitHub 100 MB limit)
+data/glove.6B.zip
+data/glove.6B.100d.txt
+
 # IDE / OS
 .idea/
 .vscode/
