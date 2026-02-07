@@ -1,78 +1,104 @@
-# Medical Symptom Text Classification: Simple RNN with Multiple Embeddings
+# Comparative Analysis of Medical Text Classification
 
-This repository contains the **Simple RNN** implementation for a comparative text classification study on a Medical Symptom dataset. It is part of a group assignment comparing different model architectures (SVM, RNN, LSTM, GRU) across multiple word embedding strategies.
+**Team:** Theodora, Elyse, Fadh, Egide  
 
-## Author Role
+**Objective:** Evaluate how different model architectures (SVM vs. RNN vs. LSTM vs. GRU) perform on medical symptom data when paired with four distinct embedding techniques.
 
-- **Model:** Simple RNN (PyTorch)
-- **Embeddings evaluated:** Random Initialization (baseline), Word2Vec (Skip-gram), GloVe, FastText
-- **Dataset:** Medical Symptom (configurable; see below)
+---
 
-## Repository Structure
+## 1. Role & Model Distribution
+
+Each team member owns one model and runs it against all four embeddings to maximize individual technical contribution.
+
+| Team Member | Assigned Model | Role & Strategy | Notebook |
+|-------------|----------------|-----------------|----------|
+| **Elyse** | SVM / Logistic | The Baseline. Proves if deep learning is necessary. Uses TF-IDF heavily. | `02_elyse_svm.ipynb` |
+| **Theodora** | RNN | The Foundation. Tests basic sequence learning. Good for discussing vanishing gradients and long text. | `03_theodora_rnn.ipynb` |
+| **Egide** | GRU | The Efficiency Champ. Faster, simplified LSTM. Expected to perform well with quicker training. | `04_egide_gru.ipynb` |
+| **Fadh** | LSTM | The Heavy Hitter. Standard for sequence data. Expected high accuracy, slower training. | `05_fadh_lstm.ipynb` |
+
+---
+
+## 2. The Four Embedding Techniques (Experiment List)
+
+Every member runs their assigned model with these **exact four embeddings** for apples-to-apples comparison in the final report.
+
+| Embedding | Type | Hypothesis |
+|-----------|------|------------|
+| **TF-IDF** | Statistical baseline | Works well for SVM; likely poorly for RNN/LSTM. |
+| **Skip-gram (Word2Vec)** | Contextual | Good for capturing rare medical terms. |
+| **GloVe** | Pre-trained | Tests whether transfer learning (e.g. Wikipedia) helps. |
+| **FastText** | Sub-word | Expected to perform best; handles medical prefixes/suffixes (e.g. "gastro-", "-itis"). |
+
+---
+
+## 3. Shared Preprocessing Strategy (Mandatory)
+
+Same cleaning logic across all notebooks (required for full preprocessing marks):
+
+- **Rule 1:** Lowercase everything.
+- **Rule 2:** Keep hyphens (e.g. "X-ray", "Type-2").
+- **Rule 3:** Remove medical stopwords (e.g. "patient", "doctor") that add noise.
+
+Use the shared preprocessing code block at the top of each notebook.
+
+---
+
+## 4. Repository Structure
 
 ```
-medical_rnn_text_classification/
-├── Medical_RNN_Embeddings.ipynb   # Main notebook: EDA, preprocessing, RNN, 4 experiments, results
-├── data/                           # Dataset and outputs (dataset.csv, GloVe, figures)
-├── requirements.txt
-└── README.md
+Formative2_Medical_Text_Classification/
+├── README.md                    # This file — comparison tables & final graphs for report
+├── requirements.txt             # pandas, sklearn, torch, etc.
+├── data/
+│   └── medical_text.csv         # (or dataset/medical_llm_dataset.csv — see notebooks)
+├── notebooks/
+│   ├── 01_data_exploration_shared.ipynb
+│   ├── 02_elyse_svm.ipynb
+│   ├── 03_theodora_rnn.ipynb
+│   ├── 04_egide_gru.ipynb
+│   └── 05_fadh_lstm.ipynb
+└── results/
+    └── final_results_table.csv  # Consolidated Accuracy & F1 (model × embedding)
 ```
 
-## Setup
+---
 
-1. **Clone the repo** (or download) and enter the directory:
+## 5. Execution Plan
+
+- **Phase 1 — Independent:** Explore data, generate 4 plots (class balance, text length, top 20 terms, vocabulary size), build model, run 4 embedding experiments, log results to the shared results spreadsheet after each run.
+- **Phase 2 — Report:** Combine results, comparison tables, and discussion (see README and `results/`).
+
+---
+
+## 6. Setup & Running
+
+1. **Clone and enter the repo:**
    ```bash
-   cd medical_rnn_text_classification
+   cd Formative2_Medical_Text_Classification
    ```
 
-2. **Create environment and install dependencies:**
+2. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Download NLTK data** (first run of the notebook will do this):
-   ```python
-   import nltk
-   nltk.download('stopwords')
-   nltk.download('punkt')
-   ```
+3. **Data:** Use the dataset in `data/` or `dataset/` (e.g. `medical_llm_dataset.csv`). Some notebooks support Kaggle download — set `USE_KAGGLE` and paths as described in the notebook.
 
-## Dataset
+4. **GloVe (if used):** Place `glove.6B.100d.txt` in `data/` or let the notebook download it (see notebook instructions). Do not commit the large GloVe zip/txt files.
 
-- **Option A — Kaggle:** Set `USE_KAGGLE = True` in the notebook and set `KAGGLE_DATASET` to your dataset slug (e.g. `niyarrbarman/symptom2disease`). Ensure the [Kaggle API](https://github.com/Kaggle/kaggle-api) is installed and configured.
-- **Option B — Local/URL:** Set `USE_KAGGLE = False` and set `DATA_PATH` to the path of your CSV (or a URL). The CSV must have a text column and a label column (names configurable via `TEXT_COL` and `LABEL_COL`).
-- **Fallback:** If no file is found at `DATA_PATH`, the notebook creates a small **synthetic** medical symptom dataset in `data/dataset.csv` so the pipeline runs end-to-end. Replace with your team’s dataset for real experiments.
+5. **Run notebooks** in order; log Accuracy and Weighted F1 to `results/final_results_table.csv` after each experiment.
 
-## Preprocessing (Shared Pipeline)
+---
 
-- Lowercase; remove punctuation except hyphens (e.g. preserve "X-ray").
-- Remove custom medical stopwords (`patient`, `doctor`, `history`) and NLTK English stopwords.
-- **No lemmatization** (per assignment spec).
-- Vocabulary: index 0 = `<PAD>`, 1 = `<UNK>`; sequences padded/truncated to **MAX_LEN=50**.
+## 7. Results & Report
 
-## Running the Notebook
+- **Comparison tables** and **final graphs** for the report live in this README (or in `results/`) once filled in.
+- Each notebook saves its own plots (e.g. EDA, embedding comparison, confusion matrix) in `data/` or as specified in the notebook.
 
-1. Open `Medical_RNN_Embeddings.ipynb` in Jupyter or VS Code.
-2. Run all cells in order.
-3. **GloVe:** The notebook can download `glove.6B.100d.txt` into `data/` if missing. Alternatively, place the file at `data/glove.6B.100d.txt` yourself.
+---
 
-## Outputs
+## 8. Reproducibility
 
-- **Tables:** Accuracy and Weighted F1 for each embedding (Random, Word2Vec, GloVe, FastText) in a Pandas DataFrame and formatted for the report.
-- **Plots:** Saved in `data/`:
-  - `eda_visualizations.png` — EDA (class distribution, text length, vocabulary, word length).
-  - `rnn_embedding_comparison.png` — Bar chart of Accuracy and Weighted F1 by embedding.
-  - `confusion_matrix.png` — Confusion matrix for the best-performing embedding.
-
-## Reproducibility
-
-- **Seed:** All experiments use `seed=42` (random, numpy, torch).
-- Same train/val/test split and preprocessing for every embedding.
-
-## Citation / Report
-
-When writing the report, use the methodology and results from this notebook. Include:
-- Dataset description and EDA figures.
-- Preprocessing and embedding strategy (with citations).
-- At least two comparison tables (e.g. RNN-by-embedding; full team model-by-embedding).
-- Discussion of why certain embeddings work better with the RNN, with references.
+- Shared preprocessing and seed (e.g. `42`) across notebooks where applicable.
+- Same train/val/test split strategy for fair comparison.
