@@ -21,6 +21,12 @@ build/
 data/glove.6B.zip
 data/glove.6B.100d.txt
 
+# Dataset (notebook downloads via Kaggle when USE_KAGGLE=True)
+dataset/
+
+# Generated outputs (notebook recreates these when run)
+data/*.png
+
 # IDE / OS
 .idea/
 .vscode/
