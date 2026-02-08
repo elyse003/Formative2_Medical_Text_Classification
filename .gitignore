@@ -19,10 +19,13 @@ build/
 
 # Large data files (exceed GitHub 100 MB limit)
 data/glove.6B.zip
+data/glove.6B
 data/glove.6B.100d.txt
 
 # Dataset (notebook downloads via Kaggle when USE_KAGGLE=True)
 dataset/
+
+!dataset/*.csv
 
 # Generated outputs (notebook recreates these when run)
 data/*.png
