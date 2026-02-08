@@ -1,0 +1,5 @@
+Rank,Embedding,Accuracy,F1
+1,TF-IDF,0.9867,0.9864
+2,Skip-gram,0.01,0.0
+3,GloVe,0.01,0.0
+4,FastText,0.01,0.0

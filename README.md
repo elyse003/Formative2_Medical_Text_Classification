@@ -1,145 +1,172 @@
-# Comparative Analysis of Medical Text Classification
+# A Comparative Analysis of Medical Text Classification: Model Architectures Across Multiple Word Embeddings
 
-**Team:** Theodora, Elyse, Fadh, Egide  
-
-**Objective:** Evaluate how different model architectures (SVM vs. RNN vs. LSTM vs. GRU) perform on medical symptom data when paired with four distinct embedding techniques.
+**Multi-class medical symptom text classification** comparing four model architectures (SVM, RNN, LSTM, GRU) and four word-embedding techniques (TF-IDF, Skip-gram Word2Vec, GloVe, FastText) on a single dataset with shared preprocessing.
 
 ---
 
-## Problem Definition & Dataset
+## Team & Facilitator
 
-**Classification problem:** Multi-class classification of medical symptom descriptions (free text) into disease/condition labels. The task is to predict the correct medical condition from patient-reported or clinical symptom text.
+| Role | Name |
+|------|------|
+| **Team** | Theodora Egbunike, Elyse Marie Uyiringiye, Fadhlullah Abdulazeez, Egide Harerimana |
+| **Facilitator** | Ms Samiratu Ntohsi |
+
+---
+
+## What This Repository Contains
+
+- **Report:** `medical text classification document.txt` — full written report (methodology, results, discussion, references).
+- **Notebooks:** One notebook per model plus a unified comparison notebook (see below).
+- **Results:** Consolidated performance tables and comparison CSVs in `results/`.
+- **Setup:** `requirements.txt` for Python dependencies.
+
+---
+
+## Problem & Objectives
+
+**Task:** Classify free-text medical symptom descriptions into one of 105 condition labels (multi-class classification).
+
+**Goals:**
+- Implement four model architectures, each evaluated with the same four embeddings.
+- Use a **shared preprocessing pipeline** across all experiments for fair comparison.
+- Perform hyperparameter tuning per embedding within each model.
+- Produce **multiple comparison tables and figures** and analyse why certain embeddings suit certain architectures (with literature support).
 
 **Research questions:**
-- Do different embedding techniques (TF-IDF, Word2Vec, GloVe, FastText) lead to different performance when used with the same model?
-- Does architecture choice (SVM vs. RNN vs. LSTM vs. GRU) interact with embedding type (e.g. does TF-IDF suit SVM better than RNN)?
-- Can transfer learning (GloVe) or sub-word models (FastText) improve medical text classification over in-domain embeddings (Word2Vec)?
-
-**Dataset justification:** We use a medical symptom/disease text dataset (e.g. Kaggle `sarimahsan/daugmented-model` or `dataset/medical_llm_dataset.csv`) so that (1) the domain is clinically relevant and (2) the vocabulary and class distribution allow a fair comparison of embeddings and architectures. The same dataset and shared preprocessing ensure apples-to-apples comparison across team members.
+- Do TF-IDF, Skip-gram, GloVe, and FastText lead to different performance when used with the same model?
+- Does architecture (SVM vs RNN vs LSTM vs GRU) interact with embedding type?
+- Does transfer learning (GloVe) or sub-word modelling (FastText) improve over in-domain Word2Vec on this task?
 
 ---
 
-## 1. Role & Model Distribution
+## Dataset
 
-Each team member owns one model and runs it against all four embeddings to maximize individual technical contribution.
-
-| Team Member | Assigned Model | Role & Strategy | Notebook |
-|-------------|----------------|-----------------|----------|
-| **Elyse** | SVM / Logistic | The Baseline. Proves if deep learning is necessary. Uses TF-IDF heavily. | `02_Elyse_svm.ipynb` |
-| **Theodora** | RNN | The Foundation. Tests basic sequence learning. Good for discussing vanishing gradients and long text. | `03_theodora_rnn.ipynb` |
-| **Egide** | GRU | The Efficiency Champ. Faster, simplified LSTM. | `04_egide_gru.ipynb` |
-| **Fadh** | LSTM | The Heavy Hitter. Standard for sequence data. Expected high accuracy, slower training. | `05_fadh_lstm.ipynb` |
+- **Source:** [Kaggle — Medical NLP / symptom text](https://www.kaggle.com/datasets/sarimahsan/daugmented-model) (or equivalent medical symptom dataset as used in the notebooks).
+- **Domain:** Medical symptom descriptions; labels are condition/symptom classes.
+- **Scale (representative):** ~77k samples, 105 classes; train/val/test splits (e.g. 70/15/15 or per-notebook). Vocabulary and max sequence length (e.g. 50) are set per notebook.
+- **Justification:** Single dataset and aligned preprocessing allow apples-to-apples comparison of embeddings and architectures.
 
 ---
 
-## 2. The Four Embedding Techniques (Experiment List)
+## Models & Embeddings
 
-Every member runs their assigned model with these **exact four embeddings** for apples-to-apples comparison in the final report.
+Each team member **owns one model** and runs it with **all four embeddings**.
 
-| Embedding | Type | Hypothesis |
-|-----------|------|------------|
-| **TF-IDF** | Statistical baseline | Works well for SVM; likely poorly for RNN/LSTM. |
-| **Skip-gram (Word2Vec)** | Contextual | Good for capturing rare medical terms. |
-| **GloVe** | Pre-trained | Tests whether transfer learning (e.g. Wikipedia) helps. |
-| **FastText** | Sub-word | Expected to perform best; handles medical prefixes/suffixes (e.g. "gastro-", "-itis"). |
+| Team Member | Model | Notebook | Framework |
+|-------------|--------|----------|-----------|
+| **Elyse** | SVM (LinearSVC) | `02_Elyse_svm.ipynb` | scikit-learn |
+| **Theodora** | RNN (MLP for TF-IDF; RNN for sequences) | `03_theodora_rnn.ipynb` | PyTorch |
+| **Fadhlullah** | LSTM | `05_fadh_lstm.ipynb` | PyTorch |
+| **Egide** | GRU | `04_egide_gru.ipynb` | TensorFlow/Keras |
 
----
+**Unified comparison:** `01_unified_comparison.ipynb` — builds consolidated tables (Tables 2–8) and unified bar charts/heatmaps from all model–embedding results.
 
-## 3. Shared Preprocessing Strategy (Mandatory)
+**The four embeddings (every model × every embedding):**
 
-Same cleaning logic across all notebooks (required for full preprocessing marks):
-
-- **Rule 1:** Lowercase everything.
-- **Rule 2:** Keep hyphens (e.g. "X-ray", "Type-2").
-- **Rule 3:** Remove medical stopwords (e.g. "patient", "doctor") that add noise.
-
-**Lemmatization:** We use **no lemmatization** in the shared pipeline (per assignment spec) so that word forms are preserved for sequence models. If a notebook (e.g. Elyse’s SVM) uses lemmatization for a specific embedding, it is documented there as an adaptation.
-
-Use the shared preprocessing code block at the top of each notebook.
+| Embedding | Type | Notes |
+|-----------|------|--------|
+| **TF-IDF** | Statistical | Document-term vectors; baseline for SVM/MLP. |
+| **Skip-gram (Word2Vec)** | Contextual | In-domain training; good for rare terms. |
+| **GloVe** | Pre-trained | e.g. glove.6B.100d; transfer learning. |
+| **FastText** | Sub-word | Character n-grams; handles OOV and morphology. |
 
 ---
 
-## 4. Repository Structure
+## Shared Preprocessing
 
-*Current layout (Egide’s notebook and optional shared EDA notebook may be added later):*
+All notebooks follow the same core rules for fair comparison:
+
+1. **Lowercase** all text.
+2. **Preserve hyphens** (e.g. "X-ray", "Type-2").
+3. **Remove medical stopwords** (e.g. "patient", "doctor", "symptoms") in addition to standard stopwords.
+4. **No lemmatisation** in the shared pipeline (word forms preserved for sequence models). Any notebook-specific adaptation (e.g. lemmatisation in one notebook) is documented there.
+
+Preprocessing is then **adapted per embedding**: e.g. tokenisation and sequence length for Word2Vec/GloVe/FastText; vectorisation for TF-IDF.
+
+---
+
+## Repository Structure
 
 ```
 Formative2_Medical_Text_Classification/
-├── README.md                    # This file — problem definition, tables, setup
-├── requirements.txt             # pandas, sklearn, torch, etc.
-├── data/
-│   └── (dataset CSV and outputs; see notebooks for paths)
+├── README.md                           # This file
+├── requirements.txt                    # Python dependencies
+├── medical text classification document.txt   # Final report
+├── .gitignore
+├── data/                               # Dataset, GloVe vectors, saved figures (create if needed)
 ├── notebooks/
-│   ├── 02_Elyse_svm.ipynb
-│   ├── 03_theodora_rnn.ipynb
-│   ├── 05_fadh_lstm.ipynb
-│   └── (04_egide_gru.ipynb — pending)
+│   ├── 01_unified_comparison.ipynb     # Consolidated tables & figures (Tables 2–8, bar charts, heatmaps)
+│   ├── 02_Elyse_svm.ipynb              # SVM + TF-IDF, Word2Vec, GloVe, FastText
+│   ├── 03_theodora_rnn.ipynb           # RNN (MLP + sequence) + four embeddings
+│   ├── 04_egide_gru.ipynb              # GRU + four embeddings
+│   └── 05_fadh_lstm.ipynb              # LSTM + four embeddings
 └── results/
-    └── final_results_table.csv  # Consolidated Accuracy & F1 (model × embedding)
+    ├── consolidated_final_results.csv # Table 2: all 16 model–embedding Accuracy & F1
+    ├── table3_best_per_model.csv      # Best configuration per model
+    ├── table4_by_embedding.csv         # Comparison by embedding (best model, mean F1)
+    ├── table5_ranking.csv              # Top 10 configurations by F1
+    ├── table6_setup_methodology.csv    # Setup/methodology per model
+    ├── table7_extended_metrics.csv     # Extended metrics (optional columns)
+    └── table8_*_embedding_ranking.csv  # Per-model embedding ranking (SVM, RNN, LSTM, GRU)
 ```
 
 ---
 
-## 5. Experiment Tables (for Report)
+## Setup & Running
 
-*Fill from each notebook and from `results/final_results_table.csv` when available.*
-
-**Table 1 — Performance by model (each row = one model, columns = embeddings)**
-
-| Model | TF-IDF (Acc / F1) | Word2Vec (Acc / F1) | GloVe (Acc / F1) | FastText (Acc / F1) |
-|-------|-------------------|---------------------|------------------|---------------------|
-| SVM (Elyse) | — | — | — | — |
-| RNN (Theodora) | — | — | — | — |
-| LSTM (Fadh) | — | — | — | — |
-| GRU (Egide) | — | — | — | — |
-
-**Table 2 — Performance by embedding (each row = one embedding, columns = models)**
-
-| Embedding | SVM | RNN | LSTM | GRU |
-|-----------|-----|-----|------|-----|
-| TF-IDF | — | — | — | — |
-| Word2Vec | — | — | — | — |
-| GloVe | — | — | — | — |
-| FastText | — | — | — | — |
-
----
-
-## 6. Execution Plan
-
-- **Phase 1 — Independent:** Explore data, generate 4 plots (class balance, text length, top 20 terms, vocabulary size), build model, run 4 embedding experiments, log results to the shared results spreadsheet and/or `results/final_results_table.csv` after each run.
-- **Phase 2 — Report:** Combine results into the tables above, add comparative discussion, limitations, and citations.
-
----
-
-## 7. Setup & Running
-
-1. **Clone and enter the repo:**
+1. **Clone the repository and enter the project directory:**
    ```bash
+   git clone <repo-url>
    cd Formative2_Medical_Text_Classification
    ```
 
-2. **Install dependencies:**
+2. **Create a virtual environment (recommended) and install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Data:** Use the dataset in `data/` or `dataset/` (e.g. `medical_llm_dataset.csv`). Some notebooks support Kaggle download — set `USE_KAGGLE` and paths as described in the notebook.
+3. **Data:**  
+   - Download the dataset from [Kaggle](https://www.kaggle.com/datasets/sarimahsan/daugmented-model) or use the path expected by each notebook (e.g. `data/` or `dataset/`).  
+   - Some notebooks use `kagglehub` for download; install with `pip install kagglehub` and configure Kaggle credentials if needed.
 
-4. **GloVe (if used):** Place `glove.6B.100d.txt` in `data/` or let the notebook download it (see notebook instructions). Do not commit the large GloVe zip/txt files.
+4. **GloVe (for LSTM/GRU/RNN):**  
+   Place `glove.6B.100d.txt` in `data/` or follow the download instructions inside the notebook. Do not commit large GloVe files.
 
-5. **Run notebooks** in order; log Accuracy and Weighted F1 to `results/final_results_table.csv` after each experiment.
+5. **Run notebooks:**  
+   - Run **02, 03, 04, 05** to reproduce each model’s results (each notebook runs four embedding experiments).  
+   - Run **01_unified_comparison.ipynb** to regenerate consolidated tables and figures (uses the same numbers as in the report; can also load from `results/consolidated_final_results.csv`).
+
+6. **Reproducibility:**  
+   Use the same random seed (e.g. 42) and split strategy where documented; shared preprocessing keeps comparisons fair.
 
 ---
 
-## 8. Results & Report
+## Results Summary
 
-- **Comparison tables** and **final graphs** for the report are in this README (Tables 1–2 above) and in `results/` once filled in.
-- Each notebook saves its own plots (e.g. EDA, embedding comparison, confusion matrix) in `data/` or as specified in the notebook.
-- **Evaluation metrics:** Accuracy, Weighted F1, and confusion matrices (as in each notebook).
+- **Best overall (working runs):** GRU + TF-IDF (Accuracy 0.9878, F1 0.9877). SVM + TF-IDF and RNN (MLP) + TF-IDF are close (0.9865–0.9867).
+- **TF-IDF** is strong with SVM and with MLP/GRU as a document vector; **centroid-aggregated** Word2Vec/GloVe/FastText with SVM underperform.
+- **LSTM and GRU** achieve high performance with all four embeddings when the sequence pipeline is correct.
+- **RNN sequence runs** (Skip-gram, GloVe, FastText) in the current pipeline yield near-zero test performance (implementation/vocabulary issue); only RNN + TF-IDF (MLP) results are used in the comparison.
+
+Full tables (dataset stats, performance matrix, best per model, by embedding, top 10, setup, per-model rankings) are in the **report** and in `results/` as CSVs. Figures (class balance, text length, keywords, vocab, accuracy/F1 bar charts, heatmaps, best-per-model plot) are produced in the notebooks and referenced in the report.
 
 ---
 
-## 9. Reproducibility
+## Report & Contribution Tracker
 
-- Shared preprocessing and seed (e.g. `42`) across notebooks where applicable.
-- Same train/val/test split strategy for fair comparison.
+- **Report:** See: https://docs.google.com/document/d/1COUNlRYJLK0SfyecSquL2aF_SfgI6IKphquTDsMaOdE/edit?tab=t.0
+- **Team contribution tracker:** [Google Sheet](https://docs.google.com/spreadsheets/d/1RxjsGhus9zsNAexQp4CXROhDn1yDyL-lg4517rlwgFo/edit?usp=sharing) (link also in report Appendix 8.1).
+
+---
+
+## Evaluation Metrics
+
+- **Accuracy** — fraction of correct predictions.
+- **F1** — weighted F1 (most notebooks) or macro F1 (LSTM notebook); reported per table.
+- **Confusion matrices** — used in notebooks for selected model–embedding pairs; referenced in the report.
+
+---
+
+## Citation & License
+
+If you use this code or results, please cite the dataset (Kaggle) and the report. This project was produced for academic coursework; see the report and contribution tracker for author details and references.
