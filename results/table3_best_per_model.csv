@@ -1,0 +1,5 @@
+Model,Best Embedding,Accuracy,F1,Notebook
+GRU,TF-IDF,0.9878,0.9877,04_egide_gru.ipynb
+LSTM,Skip-gram,0.9857,0.9857,05_fadh_lstm.ipynb
+RNN,TF-IDF,0.9867,0.9864,03_theodora_rnn.ipynb
+SVM,TF-IDF,0.9865,0.9865,02_Elyse_svm.ipynb

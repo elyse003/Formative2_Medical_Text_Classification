@@ -1,0 +1,5 @@
+Model,Framework,Max seq length,Vocab size,Epochs / tuning,F1 type
+SVM,scikit-learn,N/A (doc vector),5000 (TF-IDF),CV for TF-IDF,Weighted
+RNN,PyTorch,50,5000,"3 epochs, minimal grid",Weighted
+LSTM,PyTorch,50,5000 / GloVe 100d,"10 epochs, grid",Macro
+GRU,TensorFlow/Keras,50 (seq) or vocab (TF-IDF),varies,Fixed,Weighted
