@@ -27,7 +27,7 @@ Each team member owns one model and runs it against all four embeddings to maxim
 |-------------|----------------|-----------------|----------|
 | **Elyse** | SVM / Logistic | The Baseline. Proves if deep learning is necessary. Uses TF-IDF heavily. | `02_Elyse_svm.ipynb` |
 | **Theodora** | RNN | The Foundation. Tests basic sequence learning. Good for discussing vanishing gradients and long text. | `03_theodora_rnn.ipynb` |
-| **Egide** | GRU | The Efficiency Champ. Faster, simplified LSTM. *(Notebook pending.)* | `04_egide_gru.ipynb` |
+| **Egide** | GRU | The Efficiency Champ. Faster, simplified LSTM. | `04_egide_gru.ipynb` |
 | **Fadh** | LSTM | The Heavy Hitter. Standard for sequence data. Expected high accuracy, slower training. | `05_fadh_lstm.ipynb` |
 
 ---
