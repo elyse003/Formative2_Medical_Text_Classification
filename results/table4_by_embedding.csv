@@ -1,0 +1,5 @@
+Embedding,Best Model,Best Accuracy,Best F1,Mean F1
+TF-IDF,GRU,0.9878,0.9877,0.9864
+Skip-gram,LSTM,0.9857,0.9857,0.9221
+GloVe,LSTM,0.9851,0.9851,0.9591
+FastText,GRU,0.9852,0.985,0.9363
